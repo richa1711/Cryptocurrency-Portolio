@@ -1,4 +1,4 @@
-# Cryptocurrency-Portolio
+# Cryptocurrency-Portolio Applications:
 
 
 In this project you can extract current crypto market trends using the CoinMarketCap API. With this you can monitor and watch the crypto market.
@@ -7,7 +7,6 @@ In this project you can extract current crypto market trends using the CoinMarke
 - For the pro version, get an API Key on the [Developper Portal](https://coinmarketcap.com/api/)
 - Be sure to replace the API Key in sample code with your own.
 
-## Wrapper References
 
 ### CoinMarketCapAPI
 
@@ -70,127 +69,125 @@ __Additionnal Parameters__
 
 - `api_version` (str): if given, will fetch the given version of the endpoint (default is equal to the given version in the CoinMarketCapAPI instance wich is actually `v1`). As mentioned in the list above, some endpoints are "v2" by default.
 
-__Example__
+---
+##CoinMarketCap API personal portfolio :
 
-Assuming you want to get informations about bitcoin. First, read the [documentation]((https://coinmarketcap.com/api/documentation/v1/#operation/getV1CryptocurrencyInfo)) of the corresponding __cryptocurrency_info__ endpoint. 
-  - You can pass the `symbol` parameter like : `cmc.cryptocurrency_info(symbol='BTC')`
-  - or with the `slug` parameter : `cmc.cryptocurrency_info(slug='bitcoin')`
-
-You can switch easly in the __sandbox mode__ without giving an API key or by setting it to `None` :
-  - `cmc = CoinMarketCapAPI() # You are in sandbox environnement`
-
-You can enable a __debuging mode__, just set `debug` to `True` to main class:
+Assuming you want to get informations about bitcoin. First, read the [documentation]((https://coinmarketcap.com/api/documentation/v1/#operation/getV1CryptocurrencyInfo)) of the corresponding __cryptocurrency_info__ endpoint. Then on your pc you can run the following python code to successfully make an api call and fetch the data via json.
 
 ```python
-cmc = CoinMarketCapAPI(debug=True)
-cmc.cryptocurrency_info(symbol='BTC')
+local_currency = 'RUP'
+local_symbol = '₹'
+api_key = '______your___api__key___here_______'
+
+headers = {'X-CMC_PRO_API_KEY': api_key}
+
+base_url = 'https://pro-api.coinmarketcap.com'
+global_url = base_url + '/v1/global-metrics/quotes/latest?convert=' + local_currency
+
+request = requests.get(global_url, headers=headers)
+results = request.json()
 ```
+
+For printing the json stucture :
+
+```python
+print(json.dumps(results, sort_keys=True, indent=4))
+````
 
 This will produce this output :
 
 ```
-2019-04-06 16:03:04,716 root         DEBUG    GET SANDBOX 'v1/cryptocurrency/info'
-PARAMETERS: {'symbol': 'BTC'}
-2019-04-06 16:03:05,004 root         DEBUG    RESPONSE: 288ms OK: {u'BTC': {u'category': u'coin', u'name': u'Bitcoin', u'tags': [u'mineable'], u'symbol': u'BTC', u'id': 1, [...]}
+{
+    "data": {
+        "SHIB": {
+            "circulating_supply": 549063278876301.94,
+            "cmc_rank": 16,
+            "date_added": "2020-08-01T00:00:00.000Z",
+            "id": 5994,
+            "is_active": 1,
+            "is_fiat": 0,
+            "last_updated": "2023-01-15T10:52:00.000Z",
+            "max_supply": null,
+            "name": "Shiba Inu",
+            "num_market_pairs": 479,
+            "platform": {
+                "id": 1027,
+                "name": "Ethereum",
+                "slug": "ethereum",
+                "symbol": "ETH",
+                "token_address": "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce"
+            },
+            "quote": {
+                "RUP": {
+                    "fully_diluted_market_cap": 28475394314906.74,
+                    "last_updated": "2023-01-15T10:53:00.000Z",
+                    "market_cap": 26511556145837.676,
+                    "market_cap_dominance": 0.5659,
+                    "percent_change_1h": 0.16446258,
+                    "percent_change_24h": -3.15290793,
+                    "percent_change_30d": 5.22237647,
+                    "percent_change_60d": 21.2201861,
+                    "percent_change_7d": 6.67880658,
+                    "percent_change_90d": 26.61817229,
+                    "price": 0.048285065065898254,
+                    "tvl": null,
+                    "volume_24h": 1694991883075.3687,
+                    "volume_change_24h": -44.0629
+                }
+            },
+            "self_reported_circulating_supply": null,
+            "self_reported_market_cap": null,
+            "slug": "shiba-inu",
+            "symbol": "SHIB",
+            "tags": [
+                "memes",
+                "ethereum-ecosystem",
+                "doggone-doggerel"
+            ],
+            "total_supply": 589735030408322.8,
+            "tvl_ratio": null
+        }
+    },
+    "status": {
+        "credit_count": 1,
+        "elapsed": 26,
+        "error_code": 0,
+        "error_message": null,
+        "notice": null,
+        "timestamp": "2023-01-15T10:53:38.837Z"
+    }
+}
 ```
 
+you will finally your personal cryptocurrency portfolio by maintaining the csv file containing the ticker symbol and amount of the cryptocurrencies owned by you. In my `Cryptocurrency_Portfolio` directory there is `my_portfolio.csv` file. with python you can read the data from csv and can get the required information of cryptos through json structure. 
 
-Optionnaly, you can pass (on-the-fly) a __specific version__ of an endpoint by given the `api_version` keyword argument directly to a method:
-```python
-cmc.cryptocurrency_listings_latest(..., api_version="v1.1")
-```
+The final result will look like :
 
-__See also__
-- [Quick Start Guide](https://coinmarketcap.com/api/documentation/v1/#section/Quick-Start-Guide)
+![Alt text](https://github.com/richa1711/Cryptocurrency-Portolio/blob/main/Output_img/Screenshot%202023-01-15%20at%204.48.06%20PM.png)
 
-### Response
+---
+## Cryptocurrency Alert System
 
-__Synopsis__
-
-You get results of the API in a `Response` instance. 
-
-__Property__
-
-Corresponding to [standards and conventions](https://coinmarketcap.com/api/documentation/v1/#section/Standards-and-Conventions):
-
-- `data` (__dict__): will give you the result.
-- `status` (__dict__): the status object always included for both successful calls and failures.
-- `credit_count` (__int__): the number of credits this call utilized.
-- `elapsed` (__int__):  the number of milliseconds it took to process the request to the server.
-- `total_elapsed` (__int__): the total number of milliseconds it took to process the request.
-- `timesamp` (__str__): current time on the server when the call was executed.
-- `error_code` (__str | None__): In case of an error has been raised, this property will give you the status error code.
-- `error_message` (__str | None__): In case of an error has been raised, this property will give details about error.
-- `error` (__bool__): True if an error has been raised.
-
-__Example__
-
-```python
-r = cmc.cryptocurrency_info(symbol='BTC')
-print(repr(r.status))
-print(repr(r.data))
-print(repr(r.credit_count))
-```
-
-### CoinMarketCapAPIError
-
-__Synopsis__
-
-If API returns an error, `CoinMarketCapAPI` will raise a `CoinMarketCapAPIError`.
-
-__Property__
-
-- `rep` (__Response | None__): will give you a `Response` instance or `None` if request failed for an other reason than a server error.
-
-__Example__
-
-```python
-
-from coinmarketcapapi import CoinMarketCapAPI, CoinMarketCapAPIError
-
-cmc = CoinMarketCapAPI('{YOUR_API_KEY}') # Pro environnement
-# cmc = CoinMarketCapAPI() # Sandbox environnement
-
-try:
-  r = cmc.cryptocurrency_info(symbol='BTC')
-except CoinMarketCapAPIError as e:
-  r = e.rep
-  print(repr(r.error))
-  print(repr(r.status))
-  print(repr(r.data))
-
-```
+Apart from that,  we can also generate the alert, as per the limit set by the user via maintaing csv file. The required code and its description is in `Cryto_Alert_System` folder. 
 
 ---
 
-## See this project on
+## Top 100 Crypto Ranker system
 
-- [PyPi](https://pypi.org/project/python-coinmarketcap/)
-- [Github](https://github.com/rsz44/python-coinmarketcap)
+We can also list top 100 cryptocurrencies and sort them in three ways:
+- Top 100 sorted by market cap
+- Top 100 sorted by 24 hour percent change
+- Top 100 sorted by 24 hour volume
 
-## Some reading about the wrapper
+Here we have used the listings endpoint of the API. 
 
-- [CoinMarketCap API Python Tutorial (2022)](https://analyzingalpha.com/coinmarketcap-api-python-tutorial), Leo Smigel, _analyzingalpha.com_
-    - A fairly comprehensive tutorial on how the API works and who uses this package.
-- [CoinMarketCap API - An Introductory Guide](https://algotrading101.com/learn/coinmarketcap-api-guide/), Igor Radovanovic, _algotrading101.com_
-    - A short guide that gives you an overview of the API and provides examples of its uses.
+The result is below:
+
+![Alt text](https://github.com/richa1711/Cryptocurrency-Portolio/blob/main/Output_img/Screenshot%202023-01-10%20at%2010.40.08%20PM.png)
 
 ## ChangeLog
 
 - 4 nov 2022: Version 0.5
-  - Remove an unfortunate debug that could display text unnecessarily during an error.
-  - Yanked version 0.4
-- 4 nov 2022: Version 0.4
-  - Adding new endpoints (Aug 18/Sep 19):
-    + /v1/content/posts/top
-    + /v1/content/posts/latest
-    + /v1/content/posts/comments
-    + /v1/content/latest
-    + /v1/tools/postman
-      + This last one will clearly be useful to extend the wrapper according to the received schemes.
-  - Fix `api_key` default to Sandbox mode.
-  - Fix the logger, [Issue#4](https://github.com/rsz44/python-coinmarketcap/issues/4) from AlverGan.
-  - Fix install_requires, requests was missing.
   - Changing the default API version to `v2` for some endpoints :
     + /v2/cryptocurrency/info
     + /v2/cryptocurrency/quotes/latest
@@ -200,34 +197,5 @@ except CoinMarketCapAPIError as e:
     + /v2/cryptocurrency/ohlcv/historical
     + /v2/cryptocurrency/price-performance-stats/latest
     + /v2/tools/price-conversion
-  - On the Readme:
-    + Adding new methods references.
-    + Modification of the methods table to improve readability.
-    + Some grammatical corrections in README (Thanks to [__@tactipus__](https://github.com/tactipus) !).
-    + Small changes and removal of some unnecessary spaces in the example codes.
-    + Adding reading references about the API and the package (Thanks to their respective authors !).
-  - Adding docstring to classes.
-- 31 aug 2021: Version 0.3
-  - Adding new endpoints (Aug 17):
-    + /v1/cryptocurrency/categories
-    + /v1/cryptocurrency/category
-    + /v1/cryptocurrency/airdrops
-    + /v1/cryptocurrency/airdrop
-    + /v1/cryptocurrency/trending/latest
-    + /v1/cryptocurrency/trending/most-visited
-    + /v1/cryptocurrency/trending/gainers-losers
-  - PEP 8 style
-  - Adding `api_version` keyword argument to all endpoints to change on-the-fly the api version to use.
-- 8 sept 2020: Version 0.2
-  - Adding missing endpoints
-  - Fixing sandbox mode (see [Issue #1](https://github.com/rsz44/python-coinmarketcap/issues/1))
-  - Adding `deflate, gzip` encoding to receive data fast and efficiently.
-  - Documentation: adding usefull links
-- 6 apr 2019: Version 0.1
-
-## Give me a coffee
-
-```
-  BTC: 39aosiow4nsUvYVA2kP1hZPNZ7ZbJ6ouKr
-  ETH: 0x45d940FDA3F1Ce91cA7CB478af72170bb6560201
-```
+ 
+ 
